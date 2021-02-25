@@ -3,18 +3,22 @@ import React, { useState } from 'react';
 import { Container, ToggleLabel, ToggleSelector } from './styles';
 
     
-const Toggle: React.FC = () => (    
+const Toggle: React.FC = () => { 
+    
+    const [checked, setChecked] = useState(false);
 
-    <Container>
-        <ToggleLabel>Light</ToggleLabel>
-            <ToggleSelector
-                checked
-                uncheckedIcon={false}
-                checkedIcon={false}
-                onChange={() => console.log('mudou')}
-            />
-        <ToggleLabel>Dark</ToggleLabel>
-    </Container>
-)
+    return (
+        <Container>
+            <ToggleLabel>Light</ToggleLabel>
+                <ToggleSelector
+                    checked={checked}
+                    uncheckedIcon={false}
+                    checkedIcon={false}
+                    onChange={() => setChecked(!checked)}
+                />
+            <ToggleLabel>Dark</ToggleLabel>
+        </Container>
+    );
+}
 
 export default Toggle;
