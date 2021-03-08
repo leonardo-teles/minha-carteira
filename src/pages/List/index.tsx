@@ -1,4 +1,5 @@
 import React, {useMemo, useState, useEffect} from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import ContentHeader from '../../components/ContentHeader';
 import SelectInput from '../../components/SelectInput';
@@ -9,6 +10,7 @@ import expenses from '../../repositories/expenses';
 
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
+import listOfMonths from '../../utils/months';
 
 import { Container, Content, Filters } from './styles';
 
@@ -48,17 +50,36 @@ const List: React.FC<IRouteParams> = ({ match }) => {
         return type === 'entry-balance' ? gains : expenses;
     },[type]);
 
-    const months = [
-        {value: 1, label: 'Janeiro'},
-        {value: 5, label: 'Maio'},
-        {value: 7, label: 'Julho'}
-    ];
+    const years = useMemo(() => {
+        let uniqueYears: number[] = [];
 
-    const years = [
-        {value: 2018, label: 2018},
-        {value: 2019, label: 2019},
-        {value: 2020, label: 2020}
-    ];
+        listData.forEach(item => {
+            const date = new Date(item.date);
+            const year = date.getFullYear();
+
+            if(!uniqueYears.includes(year)) {
+                uniqueYears.push(year)
+            }
+        });
+
+        return uniqueYears.map(year => {
+            return {
+                value: year,
+                label: year
+            }
+        });
+
+    }, [listData]);
+
+    const months = useMemo(() => {
+        return listOfMonths.map((month, index) => {
+            return {
+                value: index + 1,
+                label: month
+            }            
+        });
+    
+    }, []);
 
     useEffect(() => {
         
@@ -72,7 +93,7 @@ const List: React.FC<IRouteParams> = ({ match }) => {
 
         const formattedData = filteredData.map(item => {
             return {
-                id: String (new Date().getTime()) + item.amount,
+                id: uuidv4(),
                 description: item.description,
                 amountFormatted: formatCurrency(Number(item.amount)),
                 frequency: item.frequency,
